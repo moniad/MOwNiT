@@ -1,4 +1,4 @@
-# Linear, polynomial and spline interpolation 1D
+# Linear, polynomial and spline interpolation 2D
 import math
 import numpy as np
 import time
