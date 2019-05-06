@@ -4,7 +4,7 @@ import numpy as np
 import time
 import matplotlib.pyplot as plt
 
-def linear_interpolation(f, a, b, n):
+def plot_interpolated_function(f, a, b, n):
     fig = plt.figure()
     ax = fig.add_subplot(1, 1, 1)
     x = np.linspace(a,b,n*100)
@@ -13,6 +13,9 @@ def linear_interpolation(f, a, b, n):
     ax.spines['right'].set_color('none') # remove unnecessary borders
     ax.spines['top'].set_color('none')
     plt.plot(x, f(x), '-r', label='Interpolated fct')
+
+def linear_interpolation(f, a, b, n):
+    plot_interpolated_function(f, a, b, n)
     
     # measuring time
     start = time.time()
@@ -38,6 +41,7 @@ def linear_interpolation(f, a, b, n):
     plt.legend(loc='upper left')
     plt.show()
     # return coefficients
+
 
 def f1(x):
     if(x > 0):
