@@ -3,113 +3,139 @@ import math
 import numpy as np
 import time
 import matplotlib.pyplot as plt
-from scipy.interpolate import lagrange
+from scipy import interpolate
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
 
 spline_points_count = 10
 
-def plot_interpolated_function(f, a, b, n):
+def plot_interpolated_function(f, a, b, c, d, n):
+    x = np.arange(a, b, (b-a)/n) # the last arg is step
+    y = np.arange(c, d, (d-c)/n)
+    
+    X, Y = np.meshgrid(x, y) # returns coordinate matrices from coordinate vectors
+    Z = f(X,Y) # function values on the grid
+
     fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
-    x = np.linspace(a,b,n*100)
-    ax.spines['left'].set_position('center')
-    ax.spines['bottom'].set_position('center')
-    ax.spines['right'].set_color('none') # remove unnecessary borders
-    ax.spines['top'].set_color('none')
-    plt.plot(x, f(x), '-r', label='Interpolated fct')
+    ax = fig.gca(projection='3d')
+    surf = ax.plot_surface(X, Y, Z, rstride=1, cstride=1, 
+                        cmap=cm.RdBu, linewidth=0, antialiased=False)
 
-def linear_interpolation(f, a, b, n):
-    plot_interpolated_function(f, a, b, n)
-    
-    # measuring time
-    start = time.time()
-    # coefficients = []
-    h = (b-a)/n
-    print("h = ", h)
-    x_cur = a
-    while(x_cur < b):
-        x_next = x_cur + h
-        print("Xnext: ", x_next)
-        # interpolate
-        a_i = (f(x_next) - f(x_cur))/h
-        b_i = f(x_cur) - a_i * x_cur
-        # tuple_a_b = (a_i, b_i)
-        _range = np.array([x_cur, x_next])
-        plt.plot(_range, _range * a_i + b_i, 'm')
-        # coefficients.append(tuple_a_b)
-        x_cur = x_next
+    ax.zaxis.set_major_locator(LinearLocator(10))
+    ax.zaxis.set_major_formatter(FormatStrFormatter('%.02f'))
 
-    # end of measuring time
-    end = time.time()
-    print("time: ", end-start)
-    plt.legend(loc='upper left')
-    plt.show()
-    # return coefficients
+    fig.colorbar(surf, shrink=0.5, aspect=5)
 
-def polynomial_interpolation(f, a, b, n):
-    plot_interpolated_function(f, a, b, n)
-    
-    # measuring time
-    start = time.time()
-    x = np.linspace(a, b, n)
-    poly = lagrange(x, f(x))
-    # print("poly: ", poly)
-    plt.plot(x, poly(x), 'g')
-    # end of measuring time
-    end = time.time()
-    print("time: ", end-start)
-    plt.legend(loc='upper left')
     plt.show()
 
-def spline_interpolation(f, a, b, n):
-    plot_interpolated_function(f, a, b, n)
+
+# def linear_interpolation(f, a, b, n):
+#     plot_interpolated_function(f, a, b, n)
     
+#     # measuring time
+#     start = time.time()
+#     # coefficients = []
+#     h = (b-a)/n
+#     print("h = ", h)
+#     x_cur = a
+#     while(x_cur < b):
+#         x_next = x_cur + h
+#         print("Xnext: ", x_next)
+#         # interpolate
+#         a_i = (f(x_next) - f(x_cur))/h
+#         b_i = f(x_cur) - a_i * x_cur
+#         # tuple_a_b = (a_i, b_i)
+#         _range = np.array([x_cur, x_next])
+#         plt.plot(_range, _range * a_i + b_i, 'm')
+#         # coefficients.append(tuple_a_b)
+#         x_cur = x_next
+
+#     # end of measuring time
+#     end = time.time()
+#     print("time: ", end-start)
+#     plt.legend(loc='upper left')
+#     plt.show()
+#     # return coefficients
+
+# def polynomial_interpolation(f, a, b, n):
+#     plot_interpolated_function(f, a, b, n)
+    
+#     # measuring time
+#     start = time.time()
+#     x = np.linspace(a, b, n)
+#     poly = lagrange(x, f(x))
+#     # print("poly: ", poly)
+#     plt.plot(x, poly(x), 'g')
+#     # end of measuring time
+#     end = time.time()
+#     print("time: ", end-start)
+#     plt.legend(loc='upper left')
+#     plt.show()
+
+def spline_interpolation(f, a, b, c, d, n):
+    plot_interpolated_function(f, a, b, c, d, n)   
     # measuring time
     start = time.time()
-    h = (b-a)/n
-    print("h = ", h)
-    x_cur = a
-    while(x_cur < b):
-        x_next = x_cur + h
-        # interpolate
-        x = np.linspace(x_cur, x_next, spline_points_count)
-        y = []
-        for x_i in x:
-            y.append(f(x_i))
-        slope, intercept = np.polyfit(x, y, 1)
-        plt.plot(x, slope * x + intercept, 'b')
-        # coefficients.append(tuple_a_b)
-        x_cur = x_next
     
-    # end of measuring time
-    end = time.time()
-    print("time: ", end-start)
-    plt.legend(loc='upper left')
-    plt.show()
+    # x = np.arange(a, b, (b-a)/spline_points_count) # the last arg is step
+    # y = np.arange(c, d, (d-c)/spline_points_count)
+    # X, Y = np.meshgrid(x, y) # returns coordinate matrices from coordinate vectors
+    # f_x_y = f(x,y)
 
-def f1(x):
-    if(x > 0):
-        return np.exp(-x*x) * pow(math.log(x),2)
-    return -500.0
 
-def f2(x):
-    denominator = math.pow(x, 3) - 2*x - 5
-    if(denominator != 0):
-        return 1/denominator
-    return -500.0
+    # h = (b-a)/n
+    # print("h = ", h)
+    # x_cur = a
+    # while(x_cur < b):
+    #     x_next = x_cur + h
+    #     # interpolate
+    #     x = np.linspace(x_cur, x_next, spline_points_count)
+    #     y = []
+    #     for x_i in x:
+    #         y.append(f(x_i))
+    #     slope, intercept = np.polyfit(x, y, 1)
+    #     plt.plot(x, slope * x + intercept, 'b')
+    #     # coefficients.append(tuple_a_b)
+    #     x_cur = x_next
+    
+    # # end of measuring time
+    # end = time.time()
+    # print("time: ", end-start)
+    # plt.legend(loc='upper left')
+    # plt.show()
 
-def f3(x):
-    return np.sin(x)
+# def get_fct_values(f, a, b, n):
+#     h = (b-a)/n
+#     print("h = ", h)
+#     # x_cur = a
+#     y = []
+#     for i in range(0, n):
+#         x_cur = a + i * h
+#         # x_next = a + (i+1) * h
+#         y.append(f(x_cur))
+#     print("y: ", y)
+#     return y
 
-def f4(x):
-    # print("f(x) = 2^x")
-    return pow(2, x)
+# def f1(x):
+#     return 5 * x
 
-def f5(x):
-    return 5 * x + 2
+def f3(x, y):
+    return (1-(x**2+y**3))*np.exp(-(x**2+y**2)/2)
+ 
+    # return np.sin(x) * np.cos(x)
+
+def f4(x, y):
+    return pow(x, y)
+
+def f5(x, y):
+    return x * y + 2
 
 def main():
-    a = (float) (input("Give me the left limit: "))
-    b = (float) (input("Give me the right limit: "))
+    a = (float) (input("Give me the left x limit: "))
+    b = (float) (input("Give me the right x limit: "))
+    c = (float) (input("Give me the left y limit: "))
+    d = (float) (input("Give me the right y limit: "))
     n = (int) (input("Give me the number of interpolation nodes: "))
 
     # interpolating f3, f4, f5
@@ -118,20 +144,20 @@ def main():
         elif i == 1: f = f4
         else: f = f5
         
+        # fct_values = get_fct_values(f1, a, b, n)
         print("Time taken to interpolate f(x) = ", f, " using: ")
     # -----------------------------------------------
         print("- linear interpolation:")
-        linear_interpolation(f, a, b, n)
+        # linear_interpolation(f, a, b, n)
         print("\n")
     # -----------------------------------------------
         print("- polynomial interpolation:")
-        polynomial_interpolation(f, a, b, n)
+        # polynomial_interpolation(f, a, b, n)
         print("\n")
     # -----------------------------------------------
         print("- spline interpolation:")
-        spline_interpolation(f, a, b, n)
+        spline_interpolation(f, a, b, c, d, n)
         print("\n")
 
-    
 if __name__== "__main__":
     main()
