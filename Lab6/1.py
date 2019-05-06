@@ -132,6 +132,5 @@ def main():
         spline_interpolation(f, a, b, n)
         print("\n")
 
-    
 if __name__== "__main__":
     main()
