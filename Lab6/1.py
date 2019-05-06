@@ -71,7 +71,11 @@ def spline_interpolation(f, a, b, n):
     while(x_cur < b):
         x_next = x_cur + h
         # interpolate
+<<<<<<< HEAD
         x = np.linspace(x_cur, x_next, spline_points_count)
+=======
+        x = np.linspace(x_cur, x_next, 10)
+>>>>>>> 8398aa48e7df97ea69001bd1f0707b54ec547315
         y = []
         for x_i in x:
             y.append(f(x_i))
@@ -112,6 +116,7 @@ def main():
     b = (float) (input("Give me the right limit: "))
     n = (int) (input("Give me the number of interpolation nodes: "))
 
+<<<<<<< HEAD
     # interpolating f3, f4, f5
     for i in range(0, 3):
         if i == 0: f = f3
@@ -132,6 +137,26 @@ def main():
         spline_interpolation(f, a, b, n)
         print("\n")
 
+=======
+    print("Time taken to interpolate using: ")
+# -----------------------------------------------
+    print("- linear interpolation:")
+    # interpolating f1, f2, f3, f4, f5 using linear interpolation
+    print("result - f3(x) = sin(x); ")
+    linear_interpolation(f3, a, b, n)
+    print("\n")
+# -----------------------------------------------
+    print("- polynomial interpolation:")
+    print("result: - f3(x) = sin(x) ")
+    polynomial_interpolation(f3, a, b, n)
+    print("\n")
+
+# -----------------------------------------------
+    print("- spline interpolation:")
+    print("result: - f3(x) = sin(x) ")
+    spline_interpolation(f3, a, b, n)
+    print("\n")
+>>>>>>> 8398aa48e7df97ea69001bd1f0707b54ec547315
     
 if __name__== "__main__":
     main()
