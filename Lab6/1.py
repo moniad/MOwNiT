@@ -3,6 +3,9 @@ import math
 import numpy as np
 import time
 import matplotlib.pyplot as plt
+from scipy.interpolate import lagrange
+
+spline_points_count = 10
 
 def plot_interpolated_function(f, a, b, n):
     fig = plt.figure()
@@ -42,6 +45,46 @@ def linear_interpolation(f, a, b, n):
     plt.show()
     # return coefficients
 
+def polynomial_interpolation(f, a, b, n):
+    plot_interpolated_function(f, a, b, n)
+    
+    # measuring time
+    start = time.time()
+    x = np.linspace(a, b, n)
+    poly = lagrange(x, f(x))
+    # print("poly: ", poly)
+    plt.plot(x, poly(x), 'g')
+    # end of measuring time
+    end = time.time()
+    print("time: ", end-start)
+    plt.legend(loc='upper left')
+    plt.show()
+
+def spline_interpolation(f, a, b, n):
+    plot_interpolated_function(f, a, b, n)
+    
+    # measuring time
+    start = time.time()
+    h = (b-a)/n
+    print("h = ", h)
+    x_cur = a
+    while(x_cur < b):
+        x_next = x_cur + h
+        # interpolate
+        x = np.linspace(x_cur, x_next, spline_points_count)
+        y = []
+        for x_i in x:
+            y.append(f(x_i))
+        slope, intercept = np.polyfit(x, y, 1)
+        plt.plot(x, slope * x + intercept, 'b')
+        # coefficients.append(tuple_a_b)
+        x_cur = x_next
+    
+    # end of measuring time
+    end = time.time()
+    print("time: ", end-start)
+    plt.legend(loc='upper left')
+    plt.show()
 
 def f1(x):
     if(x > 0):
@@ -69,38 +112,26 @@ def main():
     b = (float) (input("Give me the right limit: "))
     n = (int) (input("Give me the number of interpolation nodes: "))
 
-    print("Time taken to interpolate using: ")
-# -----------------------------------------------
-    print("- linear interpolation:")
-    # interpolating f1, f2, f3, f4, f5 using linear interpolation
-    print("result - f3(x) = sin(x); ")
-    linear_interpolation(f3, a, b, n)
-    print("\n")
-# -----------------------------------------------
-#     print("- polynomial interpolation:")
-#     start = time.time()
-#     print("result: - f1 ", trapezoidal_rule(f1, a, b, n))
-#     end = time.time()
-#     print("time: ", end-start)
+    # interpolating f3, f4, f5
+    for i in range(0, 3):
+        if i == 0: f = f3
+        elif i == 1: f = f4
+        else: f = f5
+        
+        print("Time taken to interpolate f(x) = ", f, " using: ")
+    # -----------------------------------------------
+        print("- linear interpolation:")
+        linear_interpolation(f, a, b, n)
+        print("\n")
+    # -----------------------------------------------
+        print("- polynomial interpolation:")
+        polynomial_interpolation(f, a, b, n)
+        print("\n")
+    # -----------------------------------------------
+        print("- spline interpolation:")
+        spline_interpolation(f, a, b, n)
+        print("\n")
 
-#     print("- another adaptive quadrature: ")
-#     start = time.time()
-#     print("result: - f1 ", another_adaptive_quadrature(f1, a, b, error))
-#     end = time.time()
-#     print("time: ", end-start)
-#     print("\n")
-# # -----------------------------------------------
-#     print("- spline interpolation:")
-#     start = time.time()
-#     print("result: - f2 ", trapezoidal_rule(f2, a, b, n))
-#     end = time.time()
-#     print("time: ", end-start)
-
-#     print("- rectangle rule: ")
-#     start = time.time()
-#     print("result: - f2 ", rectangle_rule(f2, a, b, n))
-#     end = time.time()
-#     print("time: ", end-start)
     
 if __name__== "__main__":
     main()
