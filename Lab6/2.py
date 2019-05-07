@@ -7,6 +7,12 @@ from scipy import interpolate
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator, FormatStrFormatter
+import plotly.plotly as py
+import plotly.graph_objs as go
+import plotly 
+plotly.tools.set_credentials_file(username='moniad', api_key='uBGLg0vf0VvXFSyD261T')
+plotly.tools.set_config_file(world_readable=True,
+                             sharing='public')
 
 spline_points_count = 10
 
@@ -78,11 +84,62 @@ def spline_interpolation(f, a, b, c, d, n):
     # measuring time
     start = time.time()
     
-    # x = np.arange(a, b, (b-a)/spline_points_count) # the last arg is step
+    # x = np.arange(a, b, (b-a)/n) # the last arg is step
+    # y = np.arange(c, d, (d-c)/n)
+    # xx, yy = np.meshgrid(x, y) # returns coordinate matrices from coordinate vectors
+    # z = f(xx,yy)
+    # f = interpolate.interp2d(x, y, z, kind='cubic')
+    
+    # x = np.arange(a, b, (b-a)/spline_points_count)
     # y = np.arange(c, d, (d-c)/spline_points_count)
-    # X, Y = np.meshgrid(x, y) # returns coordinate matrices from coordinate vectors
-    # f_x_y = f(x,y)
 
+
+    x = np.arange(a, b, (b-a)/n)
+    y = np.arange(c, d, (d-c)/n)
+    xx, yy = np.meshgrid(x, y)
+    z = f(xx, yy)
+    f = interpolate.interp2d(x, y, z, kind='cubic')
+
+    xnew = np.arange(a, b, ((b-a)/n)/spline_points_count)
+    ynew = np.arange(c, d, ((d-c)/n)/spline_points_count)
+    znew = f(xnew, ynew)
+
+    trace1 = go.Scatter3d(
+        x=x,
+        y=y,
+        z=z[0, :],
+        mode='markers',
+        name='Data',
+        marker = dict(
+            size = 7
+        )
+    )
+
+    trace2 = go.Scatter3d(
+        x=ynew,
+        y=xnew,
+        z=znew[0, :],
+        marker=dict(
+            size=3,
+        ),
+        name='Interpolated Data'
+    )
+
+    layout = go.Layout(
+        title='Interpolation and Extrapolation in 2D',
+        scene=dict(
+                camera= dict(
+                    up=dict(x=0, y=0, z=1),
+                    center=dict(x=0, y=0, z=0),
+                    eye=dict(x=1, y=-1, z=0)
+                )
+        )
+    )
+
+    data = [trace1, trace2]
+
+    fig = go.Figure(data=data, layout=layout)
+    py.iplot(fig, filename = 'Spline interpolation')
 
     # h = (b-a)/n
     # print("h = ", h)
@@ -99,9 +156,9 @@ def spline_interpolation(f, a, b, c, d, n):
     #     # coefficients.append(tuple_a_b)
     #     x_cur = x_next
     
-    # # end of measuring time
-    # end = time.time()
-    # print("time: ", end-start)
+    # end of measuring time
+    end = time.time()
+    print("time: ", end-start)
     # plt.legend(loc='upper left')
     # plt.show()
 
@@ -121,9 +178,7 @@ def spline_interpolation(f, a, b, c, d, n):
 #     return 5 * x
 
 def f3(x, y):
-    return (1-(x**2+y**3))*np.exp(-(x**2+y**2)/2)
- 
-    # return np.sin(x) * np.cos(x)
+    return np.sin(x) * np.cos(x)
 
 def f4(x, y):
     return pow(x, y)
