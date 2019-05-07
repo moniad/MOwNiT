@@ -1,3 +1,5 @@
+# linear interpolation
+
 import numpy as np
 from scipy import interpolate
 import matplotlib.pyplot as plt
@@ -55,11 +57,11 @@ def spline_interpolation(f, a, b, n):
     layout = go.Layout(
         title='Interpolation and Extrapolation in 2D',
         scene=dict(
-                camera= dict(
-                    up=dict(x=0, y=0, z=1),
-                    center=dict(x=0, y=0, z=0),
-                    eye=dict(x=1, y=-1, z=0)
-                )
+            camera= dict(
+                up=dict(x=0, y=0, z=1),
+                center=dict(x=0, y=0, z=0),
+                eye=dict(x=1, y=-1, z=0)
+            )
         )
     )
 
